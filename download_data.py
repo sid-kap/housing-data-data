@@ -73,7 +73,7 @@ COUNTY_POPULATION_PATHS = (
         "https://www2.census.gov/programs-surveys/popest/tables/1990-2000/counties/totals/99c8_00.txt",
     ]
     + [
-        f"https://www2.census.gov/programs-surveys/popest/tables/2000-2010/intercensal/county/co-est00int-01-{state_fips}.csv"
+        f"https://www2.census.gov/programs-surveys/popest/tables/2000-2010/intercensal/county/co-est00int-01-{state_fips:02d}.csv"
         # Not sure why the state fips are this weird series rather than just 1 through 50.
         for state_fips in range(1, 57)
         if state_fips not in {3, 7, 11, 14, 43, 52}
