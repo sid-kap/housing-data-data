@@ -1,0 +1,20 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+      - id: check-yaml
+        exclude: ^data/
+      - id: end-of-file-fixer
+        exclude: ^data/
+      - id: trailing-whitespace
+        exclude: ^data/
+  - repo: https://github.com/psf/black
+    rev: 19.3b0
+    hooks:
+      - id: black
+        exclude: ^data/
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.6.4
+    hooks:
+      - id: isort
+        exclude: ^data/
