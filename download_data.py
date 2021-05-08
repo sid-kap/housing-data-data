@@ -80,7 +80,7 @@ COUNTY_POPULATION_PATHS = (
     ]
     + [
         f"https://www2.census.gov/programs-surveys/popest/tables/1980-1990/counties/asrh/pe-02-{year}.xls"
-        for year in range(1980, 1989)
+        for year in range(1980, 1990)
     ]
 )
 
