@@ -23,20 +23,20 @@ def download_to_directory(url: str, output_dir: Path) -> None:
 ####################################################
 
 
-def get_place_path(year, region_tuple, frequency='a'):
-    return f"Place/{region_tuple[1]}/{region_tuple[0]}{year:04d}{frequency}.txt"
+def get_place_path(year_or_year_month, region_tuple, frequency='a'):
+    return f"Place/{region_tuple[1]}/{region_tuple[0]}{year_or_year_month:04d}{frequency}.txt"
 
 
-def get_county_path(year, frequency='a'):
-    return f"County/co{year:04d}{frequency}.txt"
+def get_county_path(year_or_year_month, frequency='a'):
+    return f"County/co{year_or_year_month:04d}{frequency}.txt"
 
 
-def get_metro_path(year, frequency='a'):
-    return f"Metro/ma{year:04d}{frequency}.txt"
+def get_metro_path(year_or_year_month, frequency='a'):
+    return f"Metro/ma{year_or_year_month:04d}{frequency}.txt"
 
 
-def get_state_path(year, frequency='a'):
-    return f"State/st{year:04d}{frequency}.txt"
+def get_state_path(year_or_year_month, frequency='a'):
+    return f"State/st{year_or_year_month:04d}{frequency}.txt"
 
 
 def download_bps_data():
@@ -48,14 +48,14 @@ def download_bps_data():
         paths.append(get_metro_path(year))
         paths.append(get_state_path(year))
 
-    # Add the latest year-to-date files.
-    # (Note that these files are not immutable—the "y" file for the current year will get
-    # updated every month, with the `survey_date` column incremented by one, and with updated totals.)
+    # Add the latest year-to-date files for 2021 through October. Ugh I need to update this every month...
     for region_tuple in REGIONS:
-        paths.append(get_place_path(2021, region_tuple, frequency='y'))
-    paths.append(get_county_path(2021, frequency='y'))
-    paths.append(get_metro_path(2021, frequency='y'))
-    paths.append(get_state_path(2021, frequency='y'))
+        paths.append(get_place_path(2110, region_tuple, frequency='y'))
+    paths.append(get_county_path(2110, frequency='y'))
+    paths.append(get_metro_path(2110, frequency='y'))
+    paths.append(get_state_path(2110, frequency='y'))
+
+    print(paths)
 
     for path in paths:
         output_dir = Path(DATA_ROOT, "bps", path).parent
