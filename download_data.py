@@ -12,6 +12,8 @@ REGIONS = [
 PREFIX = "https://www2.census.gov/econ/bps/"
 DATA_ROOT = Path("./data")
 
+LATEST_MONTH = (2021, 11)  # November 2021
+
 
 def download_to_directory(url: str, output_dir: Path) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -48,14 +50,13 @@ def download_bps_data():
         paths.append(get_metro_path(year))
         paths.append(get_state_path(year))
 
-    # Add the latest year-to-date files for 2021 through October. Ugh I need to update this every month...
+    # Last two digits of year followed by month number
+    latest_year_month_path = (LATEST_MONTH[0] % 100) * 100 + LATEST_MONTH[1]
     for region_tuple in REGIONS:
-        paths.append(get_place_path(2110, region_tuple, frequency='y'))
-    paths.append(get_county_path(2110, frequency='y'))
-    paths.append(get_metro_path(2110, frequency='y'))
-    paths.append(get_state_path(2110, frequency='y'))
-
-    print(paths)
+        paths.append(get_place_path(latest_year_month_path, region_tuple, frequency='y'))
+    paths.append(get_county_path(latest_year_month_path, frequency='y'))
+    paths.append(get_metro_path(latest_year_month_path, frequency='y'))
+    paths.append(get_state_path(latest_year_month_path, frequency='y'))
 
     for path in paths:
         output_dir = Path(DATA_ROOT, "bps", path).parent
