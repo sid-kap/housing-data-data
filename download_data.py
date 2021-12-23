@@ -51,12 +51,12 @@ def download_bps_data():
         paths.append(get_state_path(year))
 
     # Last two digits of year followed by month number
-    latest_year_month_path = (LATEST_MONTH[0] % 100) * 100 + LATEST_MONTH[1]
+    latest_year_month = (LATEST_MONTH[0] % 100) * 100 + LATEST_MONTH[1]
     for region_tuple in REGIONS:
-        paths.append(get_place_path(latest_year_month_path, region_tuple, frequency='y'))
-    paths.append(get_county_path(latest_year_month_path, frequency='y'))
-    paths.append(get_metro_path(latest_year_month_path, frequency='y'))
-    paths.append(get_state_path(latest_year_month_path, frequency='y'))
+        paths.append(get_place_path(latest_year_month, region_tuple, frequency='y'))
+    paths.append(get_county_path(latest_year_month, frequency='y'))
+    paths.append(get_metro_path(latest_year_month, frequency='y'))
+    paths.append(get_state_path(latest_year_month, frequency='y'))
 
     for path in paths:
         output_dir = Path(DATA_ROOT, "bps", path).parent
