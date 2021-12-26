@@ -1,4 +1,4 @@
-#! /usr/bin/env python3.8
+#! /usr/bin/env python3.10
 import shutil
 from pathlib import Path
 from subprocess import Popen
@@ -12,6 +12,8 @@ REGIONS = [
 PREFIX = "https://www2.census.gov/econ/bps/"
 DATA_ROOT = Path("./data")
 
+LATEST_MONTH = (2021, 11)  # November 2021
+
 
 def download_to_directory(url: str, output_dir: Path) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -23,20 +25,20 @@ def download_to_directory(url: str, output_dir: Path) -> None:
 ####################################################
 
 
-def get_place_path(year, region_tuple):
-    return f"Place/{region_tuple[1]}/{region_tuple[0]}{year:04d}a.txt"
+def get_place_path(year_or_year_month, region_tuple, frequency='a'):
+    return f"Place/{region_tuple[1]}/{region_tuple[0]}{year_or_year_month:04d}{frequency}.txt"
 
 
-def get_county_path(year):
-    return f"County/co{year:04d}a.txt"
+def get_county_path(year_or_year_month, frequency='a'):
+    return f"County/co{year_or_year_month:04d}{frequency}.txt"
 
 
-def get_metro_path(year):
-    return f"Metro/ma{year:04d}a.txt"
+def get_metro_path(year_or_year_month, frequency='a'):
+    return f"Metro/ma{year_or_year_month:04d}{frequency}.txt"
 
 
-def get_state_path(year):
-    return f"State/st{year:04d}a.txt"
+def get_state_path(year_or_year_month, frequency='a'):
+    return f"State/st{year_or_year_month:04d}{frequency}.txt"
 
 
 def download_bps_data():
@@ -47,6 +49,14 @@ def download_bps_data():
         paths.append(get_county_path(year))
         paths.append(get_metro_path(year))
         paths.append(get_state_path(year))
+
+    # Last two digits of year followed by month number
+    latest_year_month = (LATEST_MONTH[0] % 100) * 100 + LATEST_MONTH[1]
+    for region_tuple in REGIONS:
+        paths.append(get_place_path(latest_year_month, region_tuple, frequency='y'))
+    paths.append(get_county_path(latest_year_month, frequency='y'))
+    paths.append(get_metro_path(latest_year_month, frequency='y'))
+    paths.append(get_state_path(latest_year_month, frequency='y'))
 
     for path in paths:
         output_dir = Path(DATA_ROOT, "bps", path).parent
