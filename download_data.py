@@ -12,7 +12,7 @@ REGIONS = [
 PREFIX = "https://www2.census.gov/econ/bps/"
 DATA_ROOT = Path("./data")
 
-LATEST_MONTH = (2021, 11)  # November 2021
+LATEST_MONTH = (2021, 12)  # December 2021
 
 
 def download_to_directory(url: str, output_dir: Path) -> None:
