@@ -12,7 +12,16 @@ REGIONS = [
 PREFIX = "https://www2.census.gov/econ/bps/"
 DATA_ROOT = Path("./data")
 
-LATEST_MONTH = (2021, 12)  # December 2021
+LATEST_MONTH = (2022, 1)  # January 2022
+
+# Whether to download the monthly files from December of the latest full year of data available.
+# This is needed in Jan-May of each year, because the full year's estimates (imputing the
+# small counties that don't get surveyed every month) for the previous year don't come out until
+# May.
+# Arguably, we could just always download the December estimate for the previous year, even if it's
+# not strictly needed. But let's do this for now, can revisit later.
+GET_LATEST_FULL_YEAR = True
+LATEST_FULL_YEAR = 2021
 
 
 def download_to_directory(url: str, output_dir: Path) -> None:
@@ -50,13 +59,17 @@ def download_bps_data():
         paths.append(get_metro_path(year))
         paths.append(get_state_path(year))
 
-    # Last two digits of year followed by month number
-    latest_year_month = (LATEST_MONTH[0] % 100) * 100 + LATEST_MONTH[1]
-    for region_tuple in REGIONS:
-        paths.append(get_place_path(latest_year_month, region_tuple, frequency='y'))
-    paths.append(get_county_path(latest_year_month, frequency='y'))
-    paths.append(get_metro_path(latest_year_month, frequency='y'))
-    paths.append(get_state_path(latest_year_month, frequency='y'))
+    monthly_datasets = [LATEST_MONTH]
+    if GET_LATEST_FULL_YEAR:
+        monthly_datasets.append((LATEST_FULL_YEAR, 12))
+    for year, month in monthly_datasets:
+        # Last two digits of year followed by month number
+        latest_year_month = (year % 100) * 100 + month
+        for region_tuple in REGIONS:
+            paths.append(get_place_path(latest_year_month, region_tuple, frequency='y'))
+        paths.append(get_county_path(latest_year_month, frequency='y'))
+        paths.append(get_metro_path(latest_year_month, frequency='y'))
+        paths.append(get_state_path(latest_year_month, frequency='y'))
 
     for path in paths:
         output_dir = Path(DATA_ROOT, "bps", path).parent
