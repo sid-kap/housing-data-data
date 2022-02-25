@@ -34,19 +34,19 @@ def download_to_directory(url: str, output_dir: Path) -> None:
 ####################################################
 
 
-def get_place_path(year_or_year_month, region_tuple, frequency='a'):
+def get_place_path(year_or_year_month, region_tuple, frequency="a"):
     return f"Place/{region_tuple[1]}/{region_tuple[0]}{year_or_year_month:04d}{frequency}.txt"
 
 
-def get_county_path(year_or_year_month, frequency='a'):
+def get_county_path(year_or_year_month, frequency="a"):
     return f"County/co{year_or_year_month:04d}{frequency}.txt"
 
 
-def get_metro_path(year_or_year_month, frequency='a'):
+def get_metro_path(year_or_year_month, frequency="a"):
     return f"Metro/ma{year_or_year_month:04d}{frequency}.txt"
 
 
-def get_state_path(year_or_year_month, frequency='a'):
+def get_state_path(year_or_year_month, frequency="a"):
     return f"State/st{year_or_year_month:04d}{frequency}.txt"
 
 
@@ -66,10 +66,10 @@ def download_bps_data():
         # Last two digits of year followed by month number
         latest_year_month = (year % 100) * 100 + month
         for region_tuple in REGIONS:
-            paths.append(get_place_path(latest_year_month, region_tuple, frequency='y'))
-        paths.append(get_county_path(latest_year_month, frequency='y'))
-        paths.append(get_metro_path(latest_year_month, frequency='y'))
-        paths.append(get_state_path(latest_year_month, frequency='y'))
+            paths.append(get_place_path(latest_year_month, region_tuple, frequency="y"))
+        paths.append(get_county_path(latest_year_month, frequency="y"))
+        paths.append(get_metro_path(latest_year_month, frequency="y"))
+        paths.append(get_state_path(latest_year_month, frequency="y"))
 
     for path in paths:
         output_dir = Path(DATA_ROOT, "bps", path).parent
