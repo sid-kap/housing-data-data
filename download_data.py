@@ -12,7 +12,7 @@ REGIONS = [
 PREFIX = "https://www2.census.gov/econ/bps/"
 DATA_ROOT = Path("./data")
 
-LATEST_MONTH = (2022, 1)  # January 2022
+LATEST_MONTH = (2022, 2)  # January 2022
 
 # Whether to download the monthly files from December of the latest full year of data available.
 # This is needed in Jan-May of each year, because the full year's estimates (imputing the
