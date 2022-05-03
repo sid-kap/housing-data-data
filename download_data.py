@@ -55,7 +55,8 @@ def download_bps_data():
     for year in range(1980, 2021):
         for region_tuple in REGIONS:
             paths.append(get_place_path(year, region_tuple))
-        paths.append(get_county_path(year))
+        if year >= 1980:
+            paths.append(get_county_path(year))
         paths.append(get_metro_path(year))
         paths.append(get_state_path(year))
 
