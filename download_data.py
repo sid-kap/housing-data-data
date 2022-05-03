@@ -12,7 +12,7 @@ REGIONS = [
 PREFIX = "https://www2.census.gov/econ/bps/"
 DATA_ROOT = Path("./data")
 
-LATEST_MONTH = (2022, 2)  # January 2022
+LATEST_MONTH = (2022, 3)  # March 2022
 
 # Whether to download the monthly files from December of the latest full year of data available.
 # This is needed in Jan-May of each year, because the full year's estimates (imputing the
@@ -55,7 +55,8 @@ def download_bps_data():
     for year in range(1980, 2021):
         for region_tuple in REGIONS:
             paths.append(get_place_path(year, region_tuple))
-        paths.append(get_county_path(year))
+        if year >= 1990:
+            paths.append(get_county_path(year))
         paths.append(get_metro_path(year))
         paths.append(get_state_path(year))
 
