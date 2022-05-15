@@ -20,8 +20,8 @@ LATEST_MONTH = (2022, 2)  # January 2022
 # May.
 # Arguably, we could just always download the December estimate for the previous year, even if it's
 # not strictly needed. But let's do this for now, can revisit later.
-GET_LATEST_FULL_YEAR = True
-LATEST_FULL_YEAR = 2021
+GET_PREVIOUS_YEAR_DECEMBER_MONTHLY_DATA = False
+PREVIOUS_YEAR = 2021
 
 
 def download_to_directory(url: str, output_dir: Path) -> None:
@@ -52,7 +52,9 @@ def get_state_path(year_or_year_month, frequency="a"):
 
 def download_bps_data():
     paths = []
-    for year in range(1980, 2021):
+
+    max_annual_year = PREVIOUS_YEAR if GET_PREVIOUS_YEAR_DECEMBER_MONTHLY_DATA else PREVIOUS_YEAR + 1
+    for year in range(1980, max_annual_year):
         for region_tuple in REGIONS:
             paths.append(get_place_path(year, region_tuple))
         paths.append(get_county_path(year))
@@ -60,8 +62,9 @@ def download_bps_data():
         paths.append(get_state_path(year))
 
     monthly_datasets = [LATEST_MONTH]
-    if GET_LATEST_FULL_YEAR:
-        monthly_datasets.append((LATEST_FULL_YEAR, 12))
+    if GET_PREVIOUS_YEAR_DECEMBER_MONTHLY_DATA:
+        monthly_datasets.append((PREVIOUS_YEAR, 12))
+
     for year, month in monthly_datasets:
         # Last two digits of year followed by month number
         latest_year_month = (year % 100) * 100 + month
