@@ -1,7 +1,11 @@
 #! /usr/bin/env python3.10
 import shutil
 from pathlib import Path
-from subprocess import Popen
+from subprocess import Popen, run
+from tempfile import TemporaryDirectory
+
+DATA_ROOT = Path("./data")
+DOWNLOAD_LOG_PATH = Path("download.log")
 
 REGIONS = [
     ("so", "South Region"),
@@ -10,7 +14,6 @@ REGIONS = [
     ("mw", "Midwest Region"),
 ]
 PREFIX = "https://www2.census.gov/econ/bps/"
-DATA_ROOT = Path("./data")
 
 LATEST_MONTH = (2022, 9)
 
@@ -25,8 +28,9 @@ PREVIOUS_YEAR = 2021
 
 
 def download_to_directory(url: str, output_dir: Path) -> None:
+    # Downloads async (in parallel)
     output_dir.mkdir(parents=True, exist_ok=True)
-    Popen(["wget", url, "-P", str(output_dir)])
+    Popen(["wget", url, "-P", str(output_dir), "-a", DOWNLOAD_LOG_PATH])
 
 
 ####################################################
@@ -53,7 +57,9 @@ def get_state_path(year_or_year_month, frequency="a"):
 def download_bps_data():
     paths = []
 
-    max_annual_year = PREVIOUS_YEAR if GET_PREVIOUS_YEAR_DECEMBER_MONTHLY_DATA else PREVIOUS_YEAR + 1
+    max_annual_year = (
+        PREVIOUS_YEAR if GET_PREVIOUS_YEAR_DECEMBER_MONTHLY_DATA else PREVIOUS_YEAR + 1
+    )
     for year in range(1980, max_annual_year):
         for region_tuple in REGIONS:
             paths.append(get_place_path(year, region_tuple))
@@ -140,16 +146,57 @@ def download_population_data():
 
 
 ####################################################
+# Canada crosswalk downloading functions
+####################################################
+
+CANADA_CROSSWALK_PATH = Path(DATA_ROOT, "canada-crosswalk")
+
+
+CANADA_CROSSWALK_FILES = [
+    "CSD.csv",
+    "CD.csv",
+    "PR.csv",
+    "CMA_CA.csv",
+]
+
+
+def download_canada_crosswalk_data():
+    with TemporaryDirectory() as temp_dir:
+        print("Downloading Canada crosswalk zip")
+        run(
+            [
+                "wget",
+                "https://www12.statcan.gc.ca/census-recensement/2021/geo/aip-pia/geosuite/files-fichiers/2021_92-150-X_eng.zip",
+                "-P",
+                temp_dir,
+                "-a",
+                DOWNLOAD_LOG_PATH,
+            ],
+            check=True,
+        )
+        run(["ls", temp_dir])
+        print("Unzipping")
+        run(["7z", "x", "2021_92-150-X_eng.zip"], check=True, cwd=temp_dir)
+        run(["mv", temp_dir + "/2021_92-150-X_eng", CANADA_CROSSWALK_PATH], check=True)
+
+    for path in CANADA_CROSSWALK_PATH.iterdir():
+        if path.name not in CANADA_CROSSWALK_FILES:
+            path.unlink()
+
+
+####################################################
 # Main
 ####################################################
 
 
 def main():
-    DATA_ROOT.mkdir(exist_ok=True)
+    DOWNLOAD_LOG_PATH.unlink()
     shutil.rmtree(DATA_ROOT)
+    DATA_ROOT.mkdir(exist_ok=True)
 
     download_bps_data()
     download_population_data()
+    download_canada_crosswalk_data()
 
 
 if __name__ == "__main__":
