@@ -3,7 +3,7 @@ import os
 import shutil
 from pathlib import Path
 from subprocess import Popen, run
-from tempfile import TemporaryDirectory
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 
 DATA_ROOT = Path("./data")
 DOWNLOAD_LOG_PATH = Path("download.log")
@@ -151,6 +151,7 @@ def download_population_data():
 ####################################################
 
 CANADA_CROSSWALK_PATH = Path(DATA_ROOT, "canada-crosswalk")
+CANADA_POPULATION_PATH = Path(DATA_ROOT, "canada-population")
 
 
 CANADA_CROSSWALK_FILES = [
@@ -167,14 +168,11 @@ def _download_zip(url: str, out_folder_path: Path) -> None:
     (which shouldn't exist before calling this function).
     """
     with NamedTemporaryFile() as temp_file:
-        run(
-            ["wget", url, "-O", temp_file.name, "-a", DOWNLOAD_LOG_PATH],
-            check=True
-        )
+        run(["wget", url, "-O", temp_file.name, "-a", DOWNLOAD_LOG_PATH], check=True)
         # e unzips all files directly into the folder, regardless of their true path.
         # Seems fine for these zips where we don't know or care if there's a wrapper folder
         # all the files we care about are flat
-        run(["7z", "e", temp_file.name, "-o", out_folder_path], check=True)
+        run(["7z", "e", temp_file.name, f"-o{out_folder_path}"], check=True)
 
 
 def download_canada_crosswalk_data() -> None:
@@ -183,9 +181,11 @@ def download_canada_crosswalk_data() -> None:
         CANADA_CROSSWALK_PATH,
     )
 
+    run(["ls", "-R", CANADA_CROSSWALK_PATH], check=True)
     for path in CANADA_CROSSWALK_PATH.iterdir():
         if path.name not in CANADA_CROSSWALK_FILES:
-            path.unlink()
+            # 7z e dumps the dirs too as empty dirs in the same folder
+            path.rmdir() if path.is_dir() else path.unlink()
 
 
 def download_canada_population_data() -> None:
@@ -201,13 +201,14 @@ def download_canada_population_data() -> None:
 
 
 def main():
-    DOWNLOAD_LOG_PATH.unlink()
+    DOWNLOAD_LOG_PATH.unlink(missing_ok=True)
     shutil.rmtree(DATA_ROOT)
     DATA_ROOT.mkdir(exist_ok=True)
 
     download_bps_data()
     download_population_data()
     download_canada_crosswalk_data()
+    download_canada_population_data()
 
 
 if __name__ == "__main__":
