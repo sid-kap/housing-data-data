@@ -181,7 +181,6 @@ def download_canada_crosswalk_data() -> None:
         CANADA_CROSSWALK_PATH,
     )
 
-    run(["ls", "-R", CANADA_CROSSWALK_PATH], check=True)
     for path in CANADA_CROSSWALK_PATH.iterdir():
         if path.name not in CANADA_CROSSWALK_FILES:
             # 7z e dumps the dirs too as empty dirs in the same folder
