@@ -1,8 +1,9 @@
 #! /usr/bin/env python3.10
+import os
 import shutil
 from pathlib import Path
 from subprocess import Popen, run
-from tempfile import TemporaryDirectory
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 
 DATA_ROOT = Path("./data")
 DOWNLOAD_LOG_PATH = Path("download.log")
@@ -150,6 +151,7 @@ def download_population_data():
 ####################################################
 
 CANADA_CROSSWALK_PATH = Path(DATA_ROOT, "canada-crosswalk")
+CANADA_POPULATION_PATH = Path(DATA_ROOT, "canada-population")
 
 
 CANADA_CROSSWALK_FILES = [
@@ -160,28 +162,36 @@ CANADA_CROSSWALK_FILES = [
 ]
 
 
-def download_canada_crosswalk_data():
-    with TemporaryDirectory() as temp_dir:
-        print("Downloading Canada crosswalk zip")
-        run(
-            [
-                "wget",
-                "https://www12.statcan.gc.ca/census-recensement/2021/geo/aip-pia/geosuite/files-fichiers/2021_92-150-X_eng.zip",
-                "-P",
-                temp_dir,
-                "-a",
-                DOWNLOAD_LOG_PATH,
-            ],
-            check=True,
-        )
-        run(["ls", temp_dir])
-        print("Unzipping")
-        run(["7z", "x", "2021_92-150-X_eng.zip"], check=True, cwd=temp_dir)
-        run(["mv", temp_dir + "/2021_92-150-X_eng", CANADA_CROSSWALK_PATH], check=True)
+def _download_zip(url: str, out_folder_path: Path) -> None:
+    """
+    Downloads a zip and unzips its contents into a folder at `out_folder_path`
+    (which shouldn't exist before calling this function).
+    """
+    with NamedTemporaryFile() as temp_file:
+        run(["wget", url, "-O", temp_file.name, "-a", DOWNLOAD_LOG_PATH], check=True)
+        # e unzips all files directly into the folder, regardless of their true path.
+        # Seems fine for these zips where we don't know or care if there's a wrapper folder
+        # all the files we care about are flat
+        run(["7z", "e", temp_file.name, f"-o{out_folder_path}"], check=True)
+
+
+def download_canada_crosswalk_data() -> None:
+    _download_zip(
+        "https://www12.statcan.gc.ca/census-recensement/2021/geo/aip-pia/geosuite/files-fichiers/2021_92-150-X_eng.zip",
+        CANADA_CROSSWALK_PATH,
+    )
 
     for path in CANADA_CROSSWALK_PATH.iterdir():
         if path.name not in CANADA_CROSSWALK_FILES:
-            path.unlink()
+            # 7z e dumps the dirs too as empty dirs in the same folder
+            path.rmdir() if path.is_dir() else path.unlink()
+
+
+def download_canada_population_data() -> None:
+    _download_zip(
+        "https://www150.statcan.gc.ca/n1/tbl/csv/17100142-eng.zip",
+        CANADA_POPULATION_PATH,
+    )
 
 
 ####################################################
@@ -190,13 +200,14 @@ def download_canada_crosswalk_data():
 
 
 def main():
-    DOWNLOAD_LOG_PATH.unlink()
+    DOWNLOAD_LOG_PATH.unlink(missing_ok=True)
     shutil.rmtree(DATA_ROOT)
     DATA_ROOT.mkdir(exist_ok=True)
 
     download_bps_data()
     download_population_data()
     download_canada_crosswalk_data()
+    download_canada_population_data()
 
 
 if __name__ == "__main__":
