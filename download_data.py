@@ -9,10 +9,10 @@ DATA_ROOT = Path("./data")
 DOWNLOAD_LOG_PATH = Path("download.log")
 
 
-def download_to_directory(url: str, output_dir: Path) -> None:
+def download_to_directory(url: str, output_dir: Path) -> Popen:
     # Downloads async (in parallel)
     output_dir.mkdir(parents=True, exist_ok=True)
-    Popen(["wget", url, "-P", str(output_dir), "-a", DOWNLOAD_LOG_PATH])
+    return Popen(["wget", url, "-P", str(output_dir), "-a", DOWNLOAD_LOG_PATH])
 
 
 ####################################################
@@ -96,10 +96,13 @@ def download_bps_data() -> None:
 
 
 def download_california_apr_data() -> None:
-    download_to_directory(
+    process = download_to_directory(
         "https://data.ca.gov/dataset/81b0841f-2802-403e-b48e-2ef4b751f77c/resource/fe505d9b-8c36-42ba-ba30-08bc4f34e022/download/table-a2-2018-2022.csv",
         Path(DATA_ROOT, "apr"),
     )
+    process.wait()
+    # gzip the file so that it's under GitHub's 100MB limit
+    run(["gzip", "-f", str(Path(DATA_ROOT, "apr", "table-a2-2018-2022.csv"))])
 
 
 ####################################################
@@ -223,6 +226,7 @@ def main() -> None:
     DATA_ROOT.mkdir(exist_ok=True)
 
     download_bps_data()
+    download_california_apr_data()
     download_population_data()
     download_canada_crosswalk_data()
     download_canada_population_data()
