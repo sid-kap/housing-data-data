@@ -1,9 +1,8 @@
 #! /usr/bin/env python3.10
-import os
 import shutil
 from pathlib import Path
 from subprocess import Popen, run
-from tempfile import NamedTemporaryFile, TemporaryDirectory
+from tempfile import NamedTemporaryFile
 
 DATA_ROOT = Path("./data")
 DOWNLOAD_LOG_PATH = Path("download.log")
