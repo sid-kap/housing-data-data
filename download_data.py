@@ -8,13 +8,25 @@ from tempfile import NamedTemporaryFile, TemporaryDirectory
 DATA_ROOT = Path("./data")
 DOWNLOAD_LOG_PATH = Path("download.log")
 
+
+def download_to_directory(url: str, output_dir: Path) -> None:
+    # Downloads async (in parallel)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    Popen(["wget", url, "-P", str(output_dir), "-a", DOWNLOAD_LOG_PATH])
+
+
+####################################################
+# BPS downloading functions
+####################################################
+
+
 REGIONS = [
     ("so", "South Region"),
     ("ne", "Northeast Region"),
     ("we", "West Region"),
     ("mw", "Midwest Region"),
 ]
-PREFIX = "https://www2.census.gov/econ/bps/"
+BPS_PREFIX = "https://www2.census.gov/econ/bps/"
 
 LATEST_MONTH = (2023, 4)
 
@@ -28,34 +40,25 @@ GET_PREVIOUS_YEAR_DECEMBER_MONTHLY_DATA = False
 PREVIOUS_YEAR = 2022
 
 
-def download_to_directory(url: str, output_dir: Path) -> None:
-    # Downloads async (in parallel)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    Popen(["wget", url, "-P", str(output_dir), "-a", DOWNLOAD_LOG_PATH])
-
-
-####################################################
-# BPS downloading functions
-####################################################
-
-
-def get_place_path(year_or_year_month, region_tuple, frequency="a"):
+def get_place_path(
+    year_or_year_month: int, region_tuple: tuple[str, str], frequency: str = "a"
+) -> str:
     return f"Place/{region_tuple[1]}/{region_tuple[0]}{year_or_year_month:04d}{frequency}.txt"
 
 
-def get_county_path(year_or_year_month, frequency="a"):
+def get_county_path(year_or_year_month: int, frequency: str = "a") -> str:
     return f"County/co{year_or_year_month:04d}{frequency}.txt"
 
 
-def get_metro_path(year_or_year_month, frequency="a"):
+def get_metro_path(year_or_year_month: int, frequency: str = "a") -> str:
     return f"Metro/ma{year_or_year_month:04d}{frequency}.txt"
 
 
-def get_state_path(year_or_year_month, frequency="a"):
+def get_state_path(year_or_year_month: int, frequency: str = "a") -> str:
     return f"State/st{year_or_year_month:04d}{frequency}.txt"
 
 
-def download_bps_data():
+def download_bps_data() -> None:
     paths = []
 
     max_annual_year = (
@@ -84,7 +87,19 @@ def download_bps_data():
 
     for path in paths:
         output_dir = Path(DATA_ROOT, "bps", path).parent
-        download_to_directory(PREFIX + path, output_dir)
+        download_to_directory(BPS_PREFIX + path, output_dir)
+
+
+####################################################
+# California APR downloading functions
+####################################################
+
+
+def download_california_apr_data() -> None:
+    download_to_directory(
+        "https://data.ca.gov/dataset/81b0841f-2802-403e-b48e-2ef4b751f77c/resource/fe505d9b-8c36-42ba-ba30-08bc4f34e022/download/table-a2-2018-2022.csv",
+        Path(DATA_ROOT, "apr"),
+    )
 
 
 ####################################################
@@ -135,7 +150,7 @@ COUNTY_POPULATION_ROOT = Path(POPULATION_ROOT, "county")
 PLACE_POPULATION_ROOT = Path(POPULATION_ROOT, "place")
 
 
-def download_population_data():
+def download_population_data() -> None:
     for path in STATE_POPULATION_PATHS:
         download_to_directory(path, STATE_POPULATION_ROOT)
 
@@ -184,7 +199,10 @@ def download_canada_crosswalk_data() -> None:
     for path in CANADA_CROSSWALK_PATH.iterdir():
         if path.name not in CANADA_CROSSWALK_FILES:
             # 7z e dumps the dirs too as empty dirs in the same folder
-            path.rmdir() if path.is_dir() else path.unlink()
+            if path.is_dir():
+                path.rmdir()
+            else:
+                path.unlink()
 
 
 def download_canada_population_data() -> None:
@@ -199,7 +217,7 @@ def download_canada_population_data() -> None:
 ####################################################
 
 
-def main():
+def main() -> None:
     DOWNLOAD_LOG_PATH.unlink(missing_ok=True)
     shutil.rmtree(DATA_ROOT)
     DATA_ROOT.mkdir(exist_ok=True)
