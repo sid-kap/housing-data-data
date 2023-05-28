@@ -105,6 +105,18 @@ def download_california_apr_data() -> None:
 
 
 ####################################################
+# Census crosswalks
+####################################################
+
+
+def download_census_crosswalk_data() -> None:
+    download_to_directory(
+        "https://www2.census.gov/programs-surveys/popest/geographies/2021/all-geocodes-v2021.xlsx",
+        Path(DATA_ROOT, "crosswalk"),
+    )
+
+
+####################################################
 # Census population downloading functions
 ####################################################
 
@@ -123,7 +135,6 @@ COUNTY_POPULATION_PATHS = (
         "https://www2.census.gov/programs-surveys/popest/tables/1990-2000/counties/totals/99c8_00.txt",
         "https://www2.census.gov/programs-surveys/popest/datasets/2010-2020/counties/totals/co-est2020-alldata.csv",
         "https://www2.census.gov/programs-surveys/popest/datasets/2020-2022/counties/totals/co-est2022-alldata.csv",
-        "https://www2.census.gov/programs-surveys/popest/geographies/2021/all-geocodes-v2021.xlsx",
     ]
     + [
         f"https://www2.census.gov/programs-surveys/popest/tables/2000-2010/intercensal/county/co-est00int-01-{state_fips:02d}.csv"
@@ -226,6 +237,7 @@ def main() -> None:
 
     download_bps_data()
     download_california_apr_data()
+    download_census_crosswalk_data()
     download_population_data()
     download_canada_crosswalk_data()
     download_canada_population_data()
