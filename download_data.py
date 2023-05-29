@@ -108,11 +108,17 @@ def download_california_apr_data() -> None:
 # Census crosswalks
 ####################################################
 
+CROSSWALK_DIR = Path(DATA_ROOT, "crosswalk")
+
 
 def download_census_crosswalk_data() -> None:
     download_to_directory(
         "https://www2.census.gov/programs-surveys/popest/geographies/2021/all-geocodes-v2021.xlsx",
-        Path(DATA_ROOT, "crosswalk"),
+        CROSSWALK_DIR,
+    )
+    download_to_directory(
+        "http://data.nber.org/cbsa-csa-fips-county-crosswalk/cbsa2fipsxw.csv",
+        CROSSWALK_DIR,
     )
 
 
