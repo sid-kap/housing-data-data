@@ -27,7 +27,7 @@ REGIONS = [
 ]
 BPS_PREFIX = "https://www2.census.gov/econ/bps/"
 
-LATEST_MONTH = (2023, 6)
+LATEST_MONTH = (2023, 8)
 
 # Whether to download the monthly files from December of the latest full year of data available.
 # This is needed in Jan-May of each year, because the full year's estimates (imputing the
@@ -96,12 +96,12 @@ def download_bps_data() -> None:
 
 def download_california_apr_data() -> None:
     process = download_to_directory(
-        "https://data.ca.gov/dataset/81b0841f-2802-403e-b48e-2ef4b751f77c/resource/fe505d9b-8c36-42ba-ba30-08bc4f34e022/download/table-a2-2018-2022.csv",
+        "https://data.ca.gov/dataset/81b0841f-2802-403e-b48e-2ef4b751f77c/resource/fe505d9b-8c36-42ba-ba30-08bc4f34e022/download/table-a2-combined.csv",
         Path(DATA_ROOT, "apr"),
     )
     process.wait()
     # gzip the file so that it's under GitHub's 100MB limit
-    run(["gzip", "-f", str(Path(DATA_ROOT, "apr", "table-a2-2018-2022.csv"))])
+    run(["gzip", "-f", str(Path(DATA_ROOT, "apr", "table-a2-combined.csv"))], check=True)
 
 
 ####################################################
