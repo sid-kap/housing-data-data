@@ -27,7 +27,7 @@ REGIONS = [
 ]
 BPS_PREFIX = "https://www2.census.gov/econ/bps/"
 
-LATEST_MONTH = (2023, 11)
+LATEST_MONTH = (2024, 2)
 
 # Whether to download the monthly files from December of the latest full year of data available.
 # This is needed in Jan-May of each year, because the full year's estimates (imputing the
@@ -35,8 +35,8 @@ LATEST_MONTH = (2023, 11)
 # May.
 # Arguably, we could just always download the December estimate for the previous year, even if it's
 # not strictly needed. But let's do this for now, can revisit later.
-GET_PREVIOUS_YEAR_DECEMBER_MONTHLY_DATA = False
-PREVIOUS_YEAR = 2022
+GET_PREVIOUS_YEAR_DECEMBER_MONTHLY_DATA = True
+PREVIOUS_YEAR = 2023
 
 
 def get_place_path(
@@ -47,10 +47,6 @@ def get_place_path(
 
 def get_county_path(year_or_year_month: int, frequency: str = "a") -> str:
     return f"County/co{year_or_year_month:04d}{frequency}.txt"
-
-
-def get_metro_path(year_or_year_month: int, frequency: str = "a") -> str:
-    return f"Metro/ma{year_or_year_month:04d}{frequency}.txt"
 
 
 def get_state_path(year_or_year_month: int, frequency: str = "a") -> str:
@@ -68,7 +64,6 @@ def download_bps_data() -> None:
             paths.append(get_place_path(year, region_tuple))
         if year >= 1990:
             paths.append(get_county_path(year))
-        paths.append(get_metro_path(year))
         paths.append(get_state_path(year))
 
     monthly_datasets = [LATEST_MONTH]
@@ -81,7 +76,6 @@ def download_bps_data() -> None:
         for region_tuple in REGIONS:
             paths.append(get_place_path(latest_year_month, region_tuple, frequency="y"))
         paths.append(get_county_path(latest_year_month, frequency="y"))
-        paths.append(get_metro_path(latest_year_month, frequency="y"))
         paths.append(get_state_path(latest_year_month, frequency="y"))
 
     for path in paths:
@@ -101,7 +95,9 @@ def download_california_apr_data() -> None:
     )
     process.wait()
     # gzip the file so that it's under GitHub's 100MB limit
-    run(["gzip", "-f", str(Path(DATA_ROOT, "apr", "table-a2-combined.csv"))], check=True)
+    run(
+        ["gzip", "-f", str(Path(DATA_ROOT, "apr", "table-a2-combined.csv"))], check=True
+    )
 
 
 ####################################################
