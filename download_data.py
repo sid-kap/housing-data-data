@@ -27,7 +27,7 @@ REGIONS = [
 ]
 BPS_PREFIX = "https://www2.census.gov/econ/bps/"
 
-LATEST_MONTH = (2024, 12)
+LATEST_MONTH = (2025, 3)
 
 # Whether to download the monthly files from December of the latest full year of data available.
 # This is needed in Jan-May of each year, because the full year's estimates (imputing the
@@ -35,8 +35,8 @@ LATEST_MONTH = (2024, 12)
 # May.
 # Arguably, we could just always download the December estimate for the previous year, even if it's
 # not strictly needed. But let's do this for now, can revisit later.
-GET_PREVIOUS_YEAR_DECEMBER_MONTHLY_DATA = False
-PREVIOUS_YEAR = 2023
+GET_PREVIOUS_YEAR_DECEMBER_MONTHLY_DATA = True
+PREVIOUS_YEAR = 2024
 
 
 def get_place_path(
