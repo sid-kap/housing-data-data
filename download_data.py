@@ -11,7 +11,7 @@ DOWNLOAD_LOG_PATH = Path("download.log")
 def download_to_directory(url: str, output_dir: Path) -> Popen:
     # Downloads async (in parallel)
     output_dir.mkdir(parents=True, exist_ok=True)
-    return Popen(["wget", url, "-P", str(output_dir), "-a", DOWNLOAD_LOG_PATH])
+    return Popen(["wget", url, "-P", str(output_dir), "-a", DOWNLOAD_LOG_PATH, "--no-check-certificate"])
 
 
 ####################################################
@@ -27,7 +27,7 @@ REGIONS = [
 ]
 BPS_PREFIX = "https://www2.census.gov/econ/bps/"
 
-LATEST_MONTH = (2025, 3)
+LATEST_MONTH = (2025, 5)
 
 # Whether to download the monthly files from December of the latest full year of data available.
 # This is needed in Jan-May of each year, because the full year's estimates (imputing the
@@ -35,7 +35,7 @@ LATEST_MONTH = (2025, 3)
 # May.
 # Arguably, we could just always download the December estimate for the previous year, even if it's
 # not strictly needed. But let's do this for now, can revisit later.
-GET_PREVIOUS_YEAR_DECEMBER_MONTHLY_DATA = True
+GET_PREVIOUS_YEAR_DECEMBER_MONTHLY_DATA = False
 PREVIOUS_YEAR = 2024
 
 
