@@ -90,13 +90,13 @@ def download_bps_data() -> None:
 
 def download_california_apr_data() -> None:
     process = download_to_directory(
-        "https://data.ca.gov/dataset/81b0841f-2802-403e-b48e-2ef4b751f77c/resource/fe505d9b-8c36-42ba-ba30-08bc4f34e022/download/table-a2-combined.csv",
+        "https://data.ca.gov/dataset/81b0841f-2802-403e-b48e-2ef4b751f77c/resource/fe505d9b-8c36-42ba-ba30-08bc4f34e022/download/tablea2.csv",
         Path(DATA_ROOT, "apr"),
     )
     process.wait()
     # gzip the file so that it's under GitHub's 100MB limit
     run(
-        ["gzip", "-f", str(Path(DATA_ROOT, "apr", "table-a2-combined.csv"))], check=True
+        ["gzip", "-f", str(Path(DATA_ROOT, "apr", "tablea2.csv"))], check=True
     )
 
 
