@@ -27,7 +27,7 @@ REGIONS = [
 ]
 BPS_PREFIX = "https://www2.census.gov/econ/bps/"
 
-LATEST_MONTH = (2025, 5)
+LATEST_MONTH = (2025, 6)
 
 # Whether to download the monthly files from December of the latest full year of data available.
 # This is needed in Jan-May of each year, because the full year's estimates (imputing the
@@ -109,7 +109,7 @@ CROSSWALK_DIR = Path(DATA_ROOT, "crosswalk")
 
 def download_census_crosswalk_data() -> None:
     download_to_directory(
-        "https://www2.census.gov/programs-surveys/popest/geographies/2021/all-geocodes-v2021.xlsx",
+        "https://www2.census.gov/programs-surveys/popest/geographies/2024/all-geocodes-v2024.xlsx",
         CROSSWALK_DIR,
     )
     download_to_directory(
@@ -125,7 +125,7 @@ def download_census_crosswalk_data() -> None:
 STATE_POPULATION_PATHS = [
     "https://www2.census.gov/programs-surveys/popest/tables/1980-1990/state/asrh/st8090ts.txt",
     "https://www2.census.gov/programs-surveys/popest/datasets/2010-2020/state/totals/nst-est2020-alldata.csv",
-    "https://www2.census.gov/programs-surveys/popest/datasets/2020-2023/state/totals/NST-EST2023-ALLDATA.csv",
+    "https://www2.census.gov/programs-surveys/popest/datasets/2020-2024/state/totals/NST-EST2024-ALLDATA.csv",
     "https://www2.census.gov/programs-surveys/popest/tables/2000-2010/intercensal/state/st-est00int-01.xls",
 ] + [
     f"https://www2.census.gov/programs-surveys/popest/tables/1990-2000/intercensal/st-co/stch-icen{year}.txt"
@@ -136,7 +136,7 @@ COUNTY_POPULATION_PATHS = (
     [
         "https://www2.census.gov/programs-surveys/popest/tables/1990-2000/counties/totals/99c8_00.txt",
         "https://www2.census.gov/programs-surveys/popest/datasets/2010-2020/counties/totals/co-est2020-alldata.csv",
-        "https://www2.census.gov/programs-surveys/popest/datasets/2020-2023/counties/totals/co-est2023-alldata.csv",
+        "https://www2.census.gov/programs-surveys/popest/datasets/2020-2024/counties/totals/co-est2024-alldata.csv",
     ]
     + [
         f"https://www2.census.gov/programs-surveys/popest/tables/2000-2010/intercensal/county/co-est00int-01-{state_fips:02d}.csv"
@@ -156,7 +156,7 @@ PLACE_POPULATION_PATHS = [
     "https://www2.census.gov/programs-surveys/popest/tables/1990-2000/2000-subcounties-evaluation-estimates/sc2000f_us.txt",
     "https://www2.census.gov/programs-surveys/popest/datasets/2000-2010/intercensal/cities/sub-est00int.csv",
     "https://www2.census.gov/programs-surveys/popest/datasets/2010-2020/cities/SUB-EST2020_ALL.csv",
-    "https://www2.census.gov/programs-surveys/popest/datasets/2020-2022/cities/totals/sub-est2022.csv",
+    "https://www2.census.gov/programs-surveys/popest/datasets/2020-2024/cities/totals/sub-est2024.csv",
 ]
 
 POPULATION_ROOT = Path(DATA_ROOT, "population")
