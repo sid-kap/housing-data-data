@@ -27,7 +27,7 @@ REGIONS = [
 ]
 BPS_PREFIX = "https://www2.census.gov/econ/bps/"
 
-LATEST_MONTH = (2025, 7)
+LATEST_MONTH = (2025, 8)
 
 # Whether to download the monthly files from December of the latest full year of data available.
 # This is needed in Jan-May of each year, because the full year's estimates (imputing the
@@ -113,7 +113,7 @@ def download_census_crosswalk_data() -> None:
         CROSSWALK_DIR,
     )
     download_to_directory(
-        "http://data.nber.org/cbsa-csa-fips-county-crosswalk/cbsa2fipsxw.csv",
+        "http://data.nber.org/cbsa-csa-fips-county-crosswalk/2023/cbsa2fipsxw_2023.csv",
         CROSSWALK_DIR,
     )
 
