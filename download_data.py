@@ -99,6 +99,16 @@ def download_california_apr_data() -> None:
         ["gzip", "-f", str(Path(DATA_ROOT, "apr", "tablea2.csv"))], check=True
     )
 
+####################################################
+# NYC DCP Housing Database downloading functions
+####################################################
+
+def download_nyc_housingdb_data() -> None:
+    process = download_to_directory(
+        "https://s-media.nyc.gov/agencies/dcp/assets/files/zip/data-tools/bytes/housing-database/housing-project-level/nychdb_25q4_csv.zip",
+        Path(DATA_ROOT, "nyc-housingdb"),
+    )
+    process.wait()
 
 ####################################################
 # Census crosswalks
@@ -239,6 +249,7 @@ def main() -> None:
 
     download_bps_data()
     download_california_apr_data()
+    download_nyc_housingdb_data()
     download_census_crosswalk_data()
     download_population_data()
     download_canada_crosswalk_data()
